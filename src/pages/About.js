@@ -2,9 +2,9 @@ import React from 'react';
 
 const About = () => {
   return (
-    <div className="">
-      <div className="bg-white p-8 rounded-md shadow-md my-16 mx-24">
-        <h1 className="text-3xl font-bold mb-6 text-center">About Us</h1>
+    <div className="w-full">
+      <div className="bg-white p-8 rounded-md shadow-md mx-4 my-16 lg:mx-24">
+        <h1 className="text-3xl font-bold mb-6  text-center">About Us</h1>
         <p className="text-gray-700 mb-4">
           Welcome to Recipe Finder, your number one source for finding delicious and diverse recipes from around the world. We're dedicated to giving you the very best of culinary experiences, with a focus on simplicity, variety, and reliability.
         </p>

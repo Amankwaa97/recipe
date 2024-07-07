@@ -59,7 +59,7 @@ function Api() {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="flex justify-center">
           <input
             type="text"
