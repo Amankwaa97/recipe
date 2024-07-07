@@ -6,8 +6,8 @@ const Navbar = () => {
     <div>
      <div>
         <nav className='flex items-center justify-between px-6 py-4 bg-transparent text-white'>
-        <h1 className='font-bold text-3xl uppercase font-serif'>Cook <span className='text-orange-300'>Ease</span></h1>
-            <ul className='flex gap-4 text-2xl font-bold'>
+        <h1 className='font-bold sm:text-3xl uppercase font-serif'>Cook <span className='text-orange-300'>Ease</span></h1>
+            <ul className='flex gap-4 text-2xl sm:font-bold max-sm:text-xs'>
                 <li><a href="/">Home</a></li>
                 <Link to='/contact'><li>Contact</li></Link>
                 <li><a href="/about">About</a></li>

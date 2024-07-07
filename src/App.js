@@ -9,7 +9,7 @@ import Navbar2 from './components/Navbar2'
 
 const App = () => {
   return (
-    <div>
+    <div className='w-full'>
      <Router>
      
       <Routes>

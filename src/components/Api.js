@@ -5,6 +5,7 @@ function Api() {
   const [recipes, setRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchError, setSearchError] = useState(false); // State to track search error
   const itemsPerPage = 8;
 
   useEffect(() => {
@@ -17,8 +18,10 @@ function Api() {
         const data = await response.json();
         setRecipes(data.hits);
         setTotalPages(Math.ceil(data.count / itemsPerPage));
+        setSearchError(false); // Reset search error state
       } catch (error) {
         console.error('Fetch error: ', error);
+        setSearchError(true); // Set search error state
       }
     };
 
@@ -32,10 +35,16 @@ function Api() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setRecipes(data.hits);
-      setTotalPages(Math.ceil(data.count / itemsPerPage));
+      if (data.hits.length === 0) {
+        setSearchError(true); // Set search error state if no results found
+      } else {
+        setRecipes(data.hits);
+        setTotalPages(Math.ceil(data.count / itemsPerPage));
+        setSearchError(false); // Reset search error state if results found
+      }
     } catch (error) {
       console.error('Fetch error: ', error);
+      setSearchError(true); // Set search error state on fetch error
     }
   };
 
@@ -72,32 +81,36 @@ function Api() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8 mx-8 ">
-          {recipes.map((recipe) => (
-            <div key={recipe.recipe.uri} className="bg-white rounded-md shadow-md overflow-hidden">
-              <img src={recipe.recipe.image} alt={recipe.recipe.label} className="w-full h-48 object-cover" />
-              <div className="p-4 text-center ">
-                <h3 className="text-lg font-bold truncate">{recipe.recipe.label}</h3>
-                <p className="text-gray-600 mt-2">{recipe.recipe.source}</p>
-                <a
-                  href={recipe.recipe.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#558db5] hover:bg-blue-300 text-white rounded-md px-4 py-2 mt-4 inline-block"
-                >
-                  View Recipe
-                </a>
+        {searchError ? (
+          <div className="text-center mt-4 text-red-600 font-bold text-4xl pt-8">No results found</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8 mx-8">
+            {recipes.map((recipe) => (
+              <div key={recipe.recipe.uri} className="bg-white rounded-md shadow-md overflow-hidden">
+                <img src={recipe.recipe.image} alt={recipe.recipe.label} className="w-full h-48 object-cover" />
+                <div className="p-4 text-center">
+                  <h3 className="text-lg font-bold truncate">{recipe.recipe.label}</h3>
+                  <p className="text-gray-600 mt-2">{recipe.recipe.source}</p>
+                  <a
+                    href={recipe.recipe.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#558db5] hover:bg-blue-300 text-white rounded-md px-4 py-2 mt-4 inline-block"
+                  >
+                    View Recipe
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {recipes.length > 0 && (
-          <div className="flex justify-center mt-8">
+        {recipes.length > 0 && !searchError && (
+          <div className=" flex flex-wrap justify-center mt-8">
             {Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index).map((pageNumber) => (
               <button
                 key={pageNumber}
-                className={`bg-[#558db5] hover:bg-blue-600 text-white rounded-md px-4 py-2 mx-2 ${currentPage === pageNumber ? 'bg-blue-600' : ''}`}
+                className={`bg-[#558db5] hover:bg-blue-600 mb-2 text-white rounded-md px-4 py-2 mx-2 ${currentPage === pageNumber ? 'bg-blue-600' : ''}`}
                 onClick={() => handlePageChange(pageNumber)}
               >
                 {pageNumber}
