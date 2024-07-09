@@ -1,27 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ContactPage = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
   const onSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
-    formData.append("access_key", "4e4128da-2269-4a4e-a8cc-d7f73450f2e4");
+    const formData = new FormData(event.target);
+    formData.append("access_key", "9878310b-8f7a-4773-90ab-65db1a220ef8"); // Consider storing this securely
 
     const object = Object.fromEntries(formData);
     const json = JSON.stringify(object);
 
-    const res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
-      body: json
-    }).then((res) => res.json());
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: json
+      }).then((res) => res.json());
 
-    if (res.success) {
-      console.log("Success", res);
-      alert("Message sent successfully");
+      if (res.success) {
+        setSuccess(true);
+        alert('Message sent successfully');
+      } else {
+        setError('Something went wrong, please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred while sending the message.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,7 +53,6 @@ const ContactPage = () => {
               type="text"
               id="fullName"
               name="fullName"
-              
               className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               required
             />
@@ -51,7 +65,6 @@ const ContactPage = () => {
               type="email"
               id="email"
               name="email"
-             
               className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               required
             />
@@ -63,11 +76,10 @@ const ContactPage = () => {
             <select
               id="requestType"
               name="requestType"
-              
               className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               required
             >
-              <option value="" disabled>Select request type</option>
+              <option value="" disabled selected>Select request type</option>
               <option value="general">General Inquiry</option>
               <option value="support">Support</option>
               <option value="feedback">Feedback</option>
@@ -80,7 +92,6 @@ const ContactPage = () => {
             <textarea
               id="message"
               name="message"
-             
               className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               rows="4"
               required
@@ -90,10 +101,13 @@ const ContactPage = () => {
             <button
               type="submit"
               className="w-full p-3 bg-[#558db5] text-white font-bold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              disabled={loading}
             >
-              Submit
+              {loading ? 'Sending...' : 'Submit'}
             </button>
           </div>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          {success && <p className="text-green-500 text-center">Message sent successfully!</p>}
         </form>
       </div>
     </div>
@@ -101,4 +115,3 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
-
